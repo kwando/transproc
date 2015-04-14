@@ -73,7 +73,7 @@ transformation.call(
 <span class="pl-c"># =&gt; [{:user=&gt;"Jane", :address=&gt;{:city=&gt;"NYC", :street=&gt;"Street 1", :zipcode=&gt;"123"}}]</span>
 
 <span class="pl-c"># Define your own transformations easily</span>
-<span class="pl-c1">Transproc</span>(<span class="pl-c1">:to_json</span>, <span class="pl-k">-</span><span class="pl-k">&gt;</span> v { <span class="pl-c1">JSON</span>.dump(v) })
+<span class="pl-c1">Transproc</span>.register(<span class="pl-c1">:to_json</span>, <span class="pl-k">-</span><span class="pl-k">&gt;</span> v { <span class="pl-c1">JSON</span>.dump(v) })
 
 <span class="pl-c1">Transproc</span>(<span class="pl-c1">:to_json</span>).call([{ <span class="pl-c1">name:</span> <span class="pl-s"><span class="pl-pds">'</span>Jane<span class="pl-pds">'</span></span> }])
 <span class="pl-c"># =&gt; "[{\"name\":\"Jane\"}]"</span>
