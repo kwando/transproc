@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Transproc by solnic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Transproc</h1>
+      <h2 class="project-tagline">Transform Ruby objects in functional style</h2>
+      <a href="https://github.com/solnic/transproc" class="btn">View on GitHub</a>
+      <a href="https://github.com/solnic/transproc/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/solnic/transproc/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="transproc-" class="anchor" href="#transproc-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Transproc <a href="https://gitter.im/solnic/transproc?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/solnic/transproc"></a>
+</h1>
+
+<p><a href="https://rubygems.org/gems/transproc"><img src="https://badge.fury.io/rb/transproc.svg" alt="Gem Version"></a>
+<a href="https://travis-ci.org/solnic/transproc"><img src="https://travis-ci.org/solnic/transproc.svg?branch=master" alt="Build Status"></a>
+<a href="https://gemnasium.com/solnic/transproc"><img src="https://gemnasium.com/solnic/transproc.png" alt="Dependency Status"></a>
+<a href="https://codeclimate.com/github/solnic/transproc"><img src="https://codeclimate.com/github/solnic/transproc/badges/gpa.svg" alt="Code Climate"></a>
+<a href="https://codeclimate.com/github/solnic/transproc"><img src="https://codeclimate.com/github/solnic/transproc/badges/coverage.svg" alt="Test Coverage"></a>
+<a href="http://inch-ci.org/github/solnic/transproc"><img src="http://inch-ci.org/github/solnic/transproc.svg?branch=master" alt="Inline docs"></a></p>
+
+<p>Functional transformations for Ruby. It's currently used as one of the data
+mapping backends in <a href="http://rom-rb.org">Ruby Object Mapper</a>.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">'</span>transproc<span class="pl-pds">'</span></span></pre></div>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install transproc
+</code></pre>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<div class="highlight highlight-ruby"><pre><span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">'</span>transproc/all<span class="pl-pds">'</span></span>
+
+<span class="pl-c"># compose transformation functions</span>
+<span class="pl-k">include</span> <span class="pl-c1">Transproc</span>::<span class="pl-c1">Helper</span>
+
+transformation <span class="pl-k">=</span> t(<span class="pl-c1">:map_array</span>, t(<span class="pl-c1">:symbolize_keys</span>) <span class="pl-k">&gt;&gt;</span> t(<span class="pl-c1">:rename_keys</span>, <span class="pl-c1">user_name:</span> <span class="pl-c1">:user</span>))
+transformation <span class="pl-k">&gt;&gt;</span><span class="pl-k">=</span> t(<span class="pl-c1">:wrap</span>, <span class="pl-c1">:address</span>, [<span class="pl-c1">:city</span>, <span class="pl-c1">:street</span>, <span class="pl-c1">:zipcode</span>])
+
+<span class="pl-c"># call the function</span>
+transformation.call(
+  [
+    { <span class="pl-s"><span class="pl-pds">'</span>user_name<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>Jane<span class="pl-pds">'</span></span>,
+      <span class="pl-s"><span class="pl-pds">'</span>city<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>NYC<span class="pl-pds">'</span></span>,
+      <span class="pl-s"><span class="pl-pds">'</span>street<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>Street 1<span class="pl-pds">'</span></span>,
+      <span class="pl-s"><span class="pl-pds">'</span>zipcode<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>123<span class="pl-pds">'</span></span> }
+  ]
+)
+<span class="pl-c"># =&gt; [{:user=&gt;"Jane", :address=&gt;{:city=&gt;"NYC", :street=&gt;"Street 1", :zipcode=&gt;"123"}}]</span>
+
+<span class="pl-c"># Define your own transformations easily</span>
+<span class="pl-c1">Transproc</span>(<span class="pl-c1">:to_json</span>, <span class="pl-k">-</span><span class="pl-k">&gt;</span> v { <span class="pl-c1">JSON</span>.dump(v) })
+
+<span class="pl-c1">Transproc</span>(<span class="pl-c1">:to_json</span>).call([{ <span class="pl-c1">name:</span> <span class="pl-s"><span class="pl-pds">'</span>Jane<span class="pl-pds">'</span></span> }])
+<span class="pl-c"># =&gt; "[{\"name\":\"Jane\"}]"</span>
+
+<span class="pl-c"># ...or create a module with custom transformations</span>
+<span class="pl-k">module</span> <span class="pl-en">MyTransformations</span>
+  <span class="pl-k">extend</span> <span class="pl-c1">Transproc</span>::<span class="pl-c1">Functions</span>
+
+  <span class="pl-k">def</span> <span class="pl-en">load_json</span>(<span class="pl-smi">v</span>)
+    <span class="pl-c1">JSON</span>.load(v)
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span>
+
+(<span class="pl-c1">Transproc</span>(<span class="pl-c1">:load_json</span>) <span class="pl-k">&gt;&gt;</span> <span class="pl-c1">Transproc</span>(<span class="pl-c1">:symbolize_keys</span>)).call(<span class="pl-s"><span class="pl-pds">'</span>[{"name":"Jane"}]<span class="pl-pds">'</span></span>)
+<span class="pl-c"># =&gt; [{ :name =&gt; "Jane" }]</span></pre></div>
+
+<h2>
+<a id="credits" class="anchor" href="#credits" aria-hidden="true"><span class="octicon octicon-link"></span></a>Credits</h2>
+
+<p>This project is inspired by the work of following people:</p>
+
+<ul>
+<li>
+<a href="https://github.com/mbj">Markus Schirp</a> and <a href="https://github.com/mbj/morpher">morpher</a> project</li>
+<li>
+<a href="https://github.com/txus">Josep M. Bach</a> and <a href="https://github.com/txus/kleisli">kleisli</a> project</li>
+</ul>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<ol>
+<li>Fork it ( <a href="https://github.com/solnic/transproc/fork">https://github.com/solnic/transproc/fork</a> )</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create a new Pull Request</li>
+</ol>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/solnic/transproc">Transproc</a> is maintained by <a href="https://github.com/solnic">solnic</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
